@@ -24,7 +24,11 @@ Usage:
 		Method: DELETE
 
 		#经过sonar静态扫描后，获取代码静态扫描报告
-		URL: http://10.142.21.77:8888/v1/sonarresult/zrblog_sonar
+		URL: http://10.142.21.77:8888/v1/sonarresult/<jobname>
+		Method: GET
+
+		#获取当前jenkins服务器中所有的job名字
+		URL：http://10.142.21.77:8888/v1/getalljobs
 		Method: GET
 
 
