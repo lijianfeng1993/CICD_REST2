@@ -255,6 +255,42 @@ func GetConsole(jobname string) map[string]string {
 	return result
 }
 
+func GetAllJenkinsJobs() map[string]string {
+	result := make(map[string]string)
+	jenkins, err := gojenkins.CreateJenkins(jenkinsurl, jenkinsuser, jenkinspass).Init()
+	if err != nil {
+		result["status"] = "fail"
+		result["info"] = "connect jenkins error"
+		return result
+	} else {
+		fmt.Println("connect jenkins success.")
+	}
+
+	res, err := jenkins.GetAllJobNames()
+	if err != nil {
+		result["status"] = "fail"
+		result["info"] = "get jenkinsjobs error"
+		return result
+	} else {
+		fmt.Println("jobs has been get.")
+	}
+
+	joblist := make([]string, 10, 20)
+	for job := range res {
+		joblist = append(joblist, res[job].Name)
+	}
+
+	joblist_string := ""
+	for jobname := range joblist {
+		joblist_string = joblist_string + joblist[jobname] + " "
+	}
+
+	result["status"] = "success"
+
+	result["info"] = joblist_string
+	return result
+}
+
 /*
 func GetBuildStatus() {
 

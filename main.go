@@ -20,6 +20,7 @@ func main() {
 		rest.Delete("/v1/deletejenkinsjob/:jobname", DeleteJenkinsJob),
 		rest.Get("/v1/jenkinsconsole/:jobname", GetJenkinsConsole),
 		rest.Post("/v2/createjenkinsjob", CreateJenkinsJob_v2),
+		rest.Get("/v1/getalljobs", GetAlljobs),
 	)
 	if err != nil {
 		log.Fatal(err)
@@ -120,6 +121,13 @@ func GetJenkinsConsole(w rest.ResponseWriter, r *rest.Request) {
 	jobname := r.PathParam("jobname")
 	lock.RLock()
 	result := jenkins.GetConsole(jobname)
+	lock.RUnlock()
+	w.WriteJson(result)
+}
+
+func GetAlljobs(w rest.ResponseWriter, r *rest.Request) {
+	lock.RLock()
+	result := jenkins.GetAllJenkinsJobs()
 	lock.RUnlock()
 	w.WriteJson(result)
 }
