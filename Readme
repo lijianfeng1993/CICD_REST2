@@ -1,7 +1,7 @@
 Usage:
 	v1.0: 
 		#输入第一个job保存的代码地址，创建新的job，调用sonar对代码静态扫描
-		URL: http://10.142.21.77:8888/v1/createjenkinsjob
+		URL: http://10.132.47.15:8888/v1/createjenkinsjob
 		Method: POST
 		Head: Content-Type application/json
 		BODY: JSON
@@ -12,33 +12,33 @@ Usage:
 			}
 
 		#对已经创建的job进行构建
-		URL: http://10.142.21.77:8888/v1/buildjenkinsjob/<jobname>
+		URL: http://10.132.47.15:8888/v1/buildjenkinsjob/<jobname>
 		Method: GET
 
 		#获取job构建时的Console Output
-		URL: http://10.142.21.77:8888/v1/jenkinsconsole/<jobname>
+		URL: http://10.132.47.15:8888/v1/jenkinsconsole/<jobname>
 		Method: GET
 
 		#删除job
-		URL: http://10.142.21.77:8888/v1/deletejenkinsjob/<jobname>
+		URL: http://10.132.47.15:8888/v1/deletejenkinsjob/<jobname>
 		Method: DELETE
 
 		#经过sonar静态扫描后，获取代码静态扫描报告
-		URL: http://10.142.21.77:8888/v1/sonarresult/<jobname>
+		URL: http://10.132.47.15:8888/v1/sonarresult/<jobname>
 		Method: GET
 
 		#获取当前jenkins服务器中所有的job名字
-		URL：http://10.142.21.77:8888/v1/getalljobs
+		URL：http://10.132.47.15:8888/v1/getalljobs
 		Method: GET
 
 
-	v2.0: CICD流程
+	v2.0: CICD流程 ,目前只测试了Python代码
 			1.拉取代码
 			2.连接sonar，代码静态扫描，给出分析报告
 			3.单元测试(还没加上)
 			4.制品构建（基于基础镜像加上代码打包成新的镜像，保存到仓库中）
 			5.代码发布（通过新的制品镜像启动容器发布服务）
-		URL: http://10.142.21.77:8888/v2/creatjenkinsjob
+		URL: http://10.132.47.15:8888/v2/creatjenkinsjob
 		Method: POST
 		Head: Content-Type application/json
 		BODY: JSON
@@ -46,5 +46,18 @@ Usage:
 				"Jobname":"python_web_helloword_cicd",
 				"Language":"python",
 				"Url":"https://github.com/lijianfeng1993/bottle_test.git"
+			}
+
+
+	v3.0: 只创建静态扫描任务
+			检出代码，调用sonar对代码进行静态扫描，返回结果。
+		URL: http://10.132.47.15:8888/v3/creatjenkinsjob
+		Method: POST
+		Head: Content-Type application/json
+		BODY: JSON
+			{
+				"Jobname":"python-pattern",
+				"Language":"python",
+				"Url":"https://github.com/faif/python-patterns.git"
 			}
 

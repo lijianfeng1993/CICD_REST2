@@ -15,12 +15,13 @@ func main() {
 	api.Use(rest.DefaultDevStack...)
 	router, err := rest.MakeRouter(
 		rest.Get("/v1/sonarresult/:jobname", GetSonar),
-		rest.Post("/v1//createjenkinsjob", CreateJenkinsJob),
+		rest.Post("/v1/createjenkinsjob", CreateJenkinsJob),
 		rest.Get("/v1/buildjenkinsjob/:jobname", BuildJenkinsJob),
 		rest.Delete("/v1/deletejenkinsjob/:jobname", DeleteJenkinsJob),
 		rest.Get("/v1/jenkinsconsole/:jobname", GetJenkinsConsole),
 		rest.Post("/v2/createjenkinsjob", CreateJenkinsJob_v2),
 		rest.Get("/v1/getalljobs", GetAlljobs),
+		rest.Post("/v3/createjenkinsjob", CreateJenkinsJob_v3),
 	)
 	if err != nil {
 		log.Fatal(err)
@@ -97,6 +98,33 @@ func CreateJenkinsJob_v2(w rest.ResponseWriter, r *rest.Request) {
 	}
 	lock.Lock()
 	result := jenkins.CreateJob_cicd(jobinfo.Jobname, jobinfo.Language, jobinfo.Url)
+	lock.Unlock()
+	w.WriteJson(result)
+}
+
+func CreateJenkinsJob_v3(w rest.ResponseWriter, r *rest.Request) {
+	jobinfo := Jobinfo{}
+	err := r.DecodeJsonPayload(&jobinfo)
+	if err != nil {
+		rest.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	//fmt.Println(jobinfo.Jobname)
+
+	if jobinfo.Jobname == "" {
+		rest.Error(w, "jobinfo jobname required", 400)
+		return
+	}
+	if jobinfo.Language == "" {
+		rest.Error(w, "jobinfo language required", 400)
+		return
+	}
+	if jobinfo.Url == "" {
+		rest.Error(w, "jobinfo url required", 400)
+		return
+	}
+	lock.Lock()
+	result := jenkins.CreateJob_sonar(jobinfo.Jobname, jobinfo.Language, jobinfo.Url)
 	lock.Unlock()
 	w.WriteJson(result)
 }
